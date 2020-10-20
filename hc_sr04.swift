@@ -9,7 +9,7 @@ class HC_SR04 {
     var temperature:Double = 19.307
     var start_ns:UInt
     var stop_ns:UInt
-    var diff_ns:UInt
+    var diff_ns:Int64
     
     
     init(pin_trigger:Id, pin_echo:Id){
@@ -53,11 +53,13 @@ class HC_SR04 {
         
         // stop timing
         stop_ns = getClockCycle()
+        print("Getting distance")
         
         if(stop_ns > start_ns){
-			diff_ns = calcNanoseconds(stop_ns - start_ns)
+			diff_ns = cyclesToNanoseconds(start:start_ns, stop:stop_ns)
         
             let diff_us = diff_ns / 1000
+            print("Diff_ns", diff_ns, " diff_us ", diff_us)
 
             var speedOfSoundInCmPerMs:Double = 0.03313 + 0.0000606 * self.temperature
             let distanceCm:Double = Double(diff_us) / 2.0 * speedOfSoundInCmPerMs
